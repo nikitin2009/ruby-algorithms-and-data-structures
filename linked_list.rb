@@ -50,12 +50,15 @@ class LinkedList
 	end
 	
 	def remove(index)
-		return false unless index.between?(0, @size)
+		return false unless index.between?(0, @size - 1)
 
 		removed = get_node(index).data
 		
 		if index == 0
 			@head = get_node(1)
+		elsif index == @size - 1
+			get_node(index - 1).next = nil
+			@tail = get_node(index - 1)
 		else
 			get_node(index - 1).next = get_node(index + 1)
 		end
