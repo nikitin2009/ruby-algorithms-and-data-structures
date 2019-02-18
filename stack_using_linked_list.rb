@@ -10,7 +10,6 @@ class Stack
 	end
 	
   def pop
-    return false if @list.size == 0
 		@list.remove(0)
 	end
 end
