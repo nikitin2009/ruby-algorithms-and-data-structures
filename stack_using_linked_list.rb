@@ -12,4 +12,8 @@ class Stack
   def pop
 		@list.remove(0)
 	end
+
+	def size
+		@list.size
+	end
 end
