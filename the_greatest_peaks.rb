@@ -73,8 +73,7 @@ class MapGraph
       # and the adjacent belongs to it;
       # Otherwise the vertex belongs to the gratest adjacent
       if vertex.value > greatest_adj.value
-        next if greatest_adj.parent && 
-                greatest_adj.parent.value > vertex.value
+        next if greatest_adj.parent
         vertex.children << greatest_adj
         greatest_adj.parent = vertex
       else
