@@ -74,12 +74,12 @@ class MapGraph
       # Otherwise the vertex belongs to the gratest adjacent
       if vertex.value > greatest_adj.value
         next if greatest_adj.parent && 
-                @vertices[greatest_adj.parent].value > vertex.value
-        vertex.children << @vertices.find_index(greatest_adj)
-        greatest_adj.parent = @vertices.find_index(vertex)
+                greatest_adj.parent.value > vertex.value
+        vertex.children << greatest_adj
+        greatest_adj.parent = vertex
       else
-        greatest_adj.children << @vertices.find_index(vertex)
-        vertex.parent = @vertices.find_index(greatest_adj)
+        greatest_adj.children << vertex
+        vertex.parent = greatest_adj
       end
     end
   end
@@ -96,7 +96,7 @@ class MapGraph
         visited << vertex
         vertex.children.each do |child|
           unless visited.include?(child)
-            queue << @vertices[child]
+            queue << child
           end
         end
       end
@@ -110,3 +110,29 @@ class MapGraph
   end
 
 end
+
+def greatest_peaks(map)
+  
+  map_graph = MapGraph.new(map)
+  
+  [map_graph.zones.min, map_graph.zones.max]
+end
+
+
+
+p greatest_peaks(
+  [
+    [9, 8, 5], 
+    [5, 6, 3], 
+    [8, 4, 1]
+  ]
+)
+# => [3, 6]
+
+p greatest_peaks(
+  [
+    [8, 12], 
+    [9, 3]
+  ]
+)
+# => [1, 3]
