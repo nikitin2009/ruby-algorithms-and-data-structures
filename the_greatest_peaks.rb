@@ -71,8 +71,9 @@ class MapGraph
       greatest_adj = adjacents.max_by(&:value)
       # If the vertex is greater than the greates adjacent, than it is a peak,
       # and the adjacent belongs to it;
-      # Otherwise the vertex belongs to the gratest adjacent
+      # Otherwise the vertex belongs to the greatest adjacent
       if vertex.value > greatest_adj.value
+        # Check if the greatest adjacent already has a parent
         next if greatest_adj.parent
         vertex.children << greatest_adj
         greatest_adj.parent = vertex
