@@ -84,6 +84,8 @@ class MapGraph
     end
   end
 
+  # Count how many vertices belongs to each peak by doing BFS algorithm for each peak,
+  # starting from a peak and traversing to its children and their children etc.
   def count_zones(peaks)
     zones = []
 
