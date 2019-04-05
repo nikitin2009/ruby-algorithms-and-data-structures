@@ -8,17 +8,13 @@ class Vertex
 end
 
 class MapGraph
-  attr_accessor :graph
+  attr_accessor :vertices, :graph
 
   # Takes two dimentional array as an argument
   def initialize(map)
     @size = map.length
     @vertices = build_verices(map)
     @graph = build_graph_from_map(map, @vertices)
-    # build_child_parent_relations(@graph)
-    # Peaks are vertices which don't have parent
-    # @peaks = @graph.keys.reject(&:parent)
-    # @zones = count_zones(@peaks)
   end
 
   def build_verices(map)
@@ -40,7 +36,11 @@ class MapGraph
     for i in (0...@size) do
       for j in (0...@size) do
         vertex = vertices[index]
-        next if vertex.value == 1
+        # No edges for "1" vertices, they are walls
+        if vertex.value == 1
+          index += 1
+          next
+        end
         # Add adjacent vertices
         graph[vertex] = []
         # horizontal
@@ -68,47 +68,46 @@ class MapGraph
     graph
   end
 
-  def build_child_parent_relations(graph)
-    graph.each do |vertex, adjacents|
-      # Find adjacent with the greatest value
-      greatest_adj = adjacents.max_by(&:value)
-      # If the vertex is greater than the greates adjacent, than it is a peak,
-      # and the adjacent belongs to it;
-      # Otherwise the vertex belongs to the gratest adjacent
-      if vertex.value > greatest_adj.value
-        next if greatest_adj.parent
-        vertex.children << greatest_adj
-        greatest_adj.parent = vertex
-      else
-        greatest_adj.children << vertex
-        vertex.parent = greatest_adj
-      end
-    end
-  end
+  def shortest_path(start, goal)
+    # Distance from the start vertex for each vertex 
+    # distance = {start => 0}
+    # Immediate predessor for each vertex in BFS from start vertex
+    predessors = {}
 
-  def count_zones(peaks)
-    zones = []
+    # Do BFS from start untill the goal is reached;
+    # calculate distance for each vertex;
+    # Add predessors for each vertex;
+    visited = []
+    queue = [start]
 
-    peaks.each do |peak|
-      visited = []
-      queue = [peak]
-
-      while queue.length > 0 do
-        vertex = queue.shift
-        visited << vertex
-        vertex.children.each do |child|
-          unless visited.include?(child)
-            queue << child
-          end
+    while queue.length > 0 do
+      vertex = queue.shift
+      break if vertex == goal
+      visited << vertex
+      @graph[vertex].each do |adjacent|
+        unless visited.include?(adjacent)
+          # distance[adjacent] = distance[vertex] + 1
+          predessors[adjacent] = vertex
+          queue << adjacent
         end
       end
-
-      zones << visited.length
-
     end
 
-    zones
+    build_path(start, goal, predessors)
 
+  end
+
+  def build_path(start, goal, predessors)
+    path = []
+    current_vertex = goal
+
+    until current_vertex == start do
+      path << current_vertex.coordinates
+      current_vertex = predessors[current_vertex]
+    end
+
+    path << current_vertex.coordinates
+    path.reverse
   end
 
 end
@@ -116,7 +115,9 @@ end
 
 def maze_escape(maze)
   map_graph = MapGraph.new(maze)
-  map_graph.graph
+  start = map_graph.vertices[0]
+  goal = map_graph.vertices.select{ |v| v.value == 9 }[0]
+  map_graph.shortest_path(start, goal)
 end
 
 p maze_escape(
