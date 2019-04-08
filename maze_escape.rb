@@ -69,13 +69,10 @@ class MapGraph
   end
 
   def shortest_path(start, goal)
-    # Distance from the start vertex for each vertex 
-    # distance = {start => 0}
     # Immediate predessor for each vertex in BFS from start vertex
     predessors = {}
 
     # Do BFS from start untill the goal is reached;
-    # calculate distance for each vertex;
     # Add predessors for each vertex;
     visited = []
     queue = [start]
@@ -86,7 +83,6 @@ class MapGraph
       visited << vertex
       @graph[vertex].each do |adjacent|
         unless visited.include?(adjacent)
-          # distance[adjacent] = distance[vertex] + 1
           predessors[adjacent] = vertex
           queue << adjacent
         end
